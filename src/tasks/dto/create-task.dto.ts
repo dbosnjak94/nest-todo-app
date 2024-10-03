@@ -1,15 +1,35 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsOptional, IsDate, IsUUID, IsArray } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsDate,
+  IsUUID,
+  IsArray,
+  MinLength,
+  MaxLength,
+  IsEnum,
+} from 'class-validator';
 import { Type } from 'class-transformer';
+
+enum TaskStatus {
+  TODO = 'TODO',
+  IN_PROGRESS = 'IN_PROGRESS',
+  DONE = 'DONE',
+}
 
 export class CreateTaskDto {
   @ApiProperty({ description: 'The title of the task' })
   @IsString()
+  @MinLength(1, { message: 'Title cannot be empty' })
+  @MaxLength(100, { message: 'Title cannot be longer than 100 characters' })
   title: string;
 
   @ApiPropertyOptional({ description: 'The description of the task' })
   @IsString()
   @IsOptional()
+  @MaxLength(200, {
+    message: 'Description cannot be longer than 200 characters',
+  })
   description?: string;
 
   @ApiProperty({
@@ -17,6 +37,7 @@ export class CreateTaskDto {
     enum: ['TODO', 'IN_PROGRESS', 'DONE'],
   })
   @IsString()
+  @IsEnum(TaskStatus, { message: 'Invalid task status' })
   status: string;
 
   @ApiPropertyOptional({ description: 'The deadline of the task' })
@@ -36,7 +57,7 @@ export class CreateTaskDto {
     type: [String],
   })
   @IsArray()
-  @IsUUID('4', { each: true })
+  @IsUUID('4', { each: true, message: 'Each category ID must be a valid UUID' })
   @IsOptional()
   categoryIds?: string[];
 }
