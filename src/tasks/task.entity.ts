@@ -6,8 +6,9 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { User } from '../users/users.entity';
+import { User } from '../users/user.entity';
 import { Category } from '../categories/category.entity';
+import { TaskStatus } from './enum/task-status.enum';
 
 @Entity({ schema: 'todo_app', name: 'tasks' })
 export class Task {
@@ -20,8 +21,12 @@ export class Task {
   @Column({ nullable: true })
   description: string;
 
-  @Column()
-  status: string;
+  @Column({
+    type: 'enum',
+    enum: TaskStatus,
+    default: TaskStatus.TODO,
+  })
+  status: TaskStatus;
 
   @Column({ nullable: true })
   deadline: Date;

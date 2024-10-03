@@ -10,12 +10,7 @@ import {
   IsEnum,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-
-enum TaskStatus {
-  TODO = 'TODO',
-  IN_PROGRESS = 'IN_PROGRESS',
-  DONE = 'DONE',
-}
+import { TaskStatus } from '../enum/task-status.enum';
 
 export class CreateTaskDto {
   @ApiProperty({ description: 'The title of the task' })
@@ -34,11 +29,11 @@ export class CreateTaskDto {
 
   @ApiProperty({
     description: 'The status of the task',
-    enum: ['TODO', 'IN_PROGRESS', 'DONE'],
+    enum: TaskStatus,
+    default: TaskStatus.TODO,
   })
-  @IsString()
-  @IsEnum(TaskStatus, { message: 'Invalid task status' })
-  status: string;
+  @IsEnum(TaskStatus)
+  status: TaskStatus;
 
   @ApiPropertyOptional({ description: 'The deadline of the task' })
   @IsDate()

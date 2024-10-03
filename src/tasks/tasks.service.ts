@@ -4,10 +4,11 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { Task } from './task.entity';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { TaskStatus } from './enum/task-status.enum';
 
 @Injectable()
 export class TasksService {
@@ -68,6 +69,34 @@ export class TasksService {
     }
 
     return { tasks, total };
+  }
+
+  async updateTaskStatus(taskId: string, status: TaskStatus): Promise<Task> {
+    const task = await this.findTaskById(taskId);
+    task.status = status;
+    try {
+      return await this.taskRepository.save(task);
+    } catch (error) {
+      throw new BadRequestException(`Failed to update task status`);
+    }
+  }
+
+  async searchTask(searchTerm: string, userId: string): Promise<Task[]> {
+    try {
+      console.log('Searching for term:', searchTerm, 'for user:', userId);
+      const tasks = await this.taskRepository.find({
+        where: [
+          { title: Like(`%${searchTerm}%`), user: { id: userId } },
+          { description: Like(`%${searchTerm}%`), user: { id: userId } },
+        ],
+        relations: ['categories'],
+      });
+      console.log('Search results:', tasks);
+      return tasks;
+    } catch (error) {
+      console.error('Error in searchTask:', error);
+      throw error;
+    }
   }
 
   async updateTask(

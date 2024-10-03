@@ -24,6 +24,7 @@ import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
 import { GetUser } from '../auth/decorators/get-user.decorator';
+import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
 
 @ApiBearerAuth()
 @ApiTags('tasks')
@@ -49,7 +50,16 @@ export class TasksController {
   @ApiOperation({ summary: 'Get all tasks' })
   @ApiResponse({ status: 200, description: 'Return all Tasks' })
   listAllTasks() {
+    console.log('merch');
     return this.taskService.listAllTasks();
+  }
+
+  @Get('search')
+  @ApiOperation({ summary: 'Search tasks by title or description' })
+  @ApiQuery({ name: 'term', required: true, type: String })
+  @ApiResponse({ status: 200, description: 'Return matching tasks.' })
+  searchTasks(@Query('term') term: string, @GetUser() user: JwtPayload) {
+    return this.taskService.searchTask(term, user.userId);
   }
 
   @Get(':id')
@@ -98,6 +108,19 @@ export class TasksController {
     @Body() updateTaskDto: UpdateTaskDto,
   ) {
     return this.taskService.updateTask(taskId, updateTaskDto);
+  }
+
+  @Patch(':id/status')
+  @ApiOperation({ summary: 'Update task status' })
+  @ApiResponse({
+    status: 200,
+    description: 'Task status updated successfully.',
+  })
+  updateTaskStatus(
+    @Param('id') id: string,
+    @Body() updateTaskStatusDto: UpdateTaskStatusDto,
+  ) {
+    return this.taskService.updateTaskStatus(id, updateTaskStatusDto.status);
   }
 
   @Delete(':id')
