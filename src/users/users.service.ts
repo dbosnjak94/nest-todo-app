@@ -2,6 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './users.entity';
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -19,15 +20,23 @@ export class UsersService {
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
     const existingUser = await this.findUserByEmail(createUserDto.email);
+
     if (existingUser) {
       throw new ConflictException('User with this email already exists');
     }
+
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+
     const user = this.userRepository.create({
       ...createUserDto,
       password: hashedPassword,
     });
-    return this.userRepository.save(user);
+
+    try {
+      return this.userRepository.save(user);
+    } catch (error) {
+      throw new BadRequestException(`Failed to create user`);
+    }
   }
 
   findAllUsers(): Promise<User[]> {
@@ -35,11 +44,23 @@ export class UsersService {
   }
 
   findUserById(userId: string): Promise<User> {
-    return this.userRepository.findOne({ where: { id: userId } });
+    const user = this.userRepository.findOne({ where: { id: userId } });
+
+    if (!user) {
+      throw new NotFoundException(`User not found`);
+    }
+
+    return user;
   }
 
   findUserByEmail(email: string): Promise<User> {
-    return this.userRepository.findOne({ where: { email: email } });
+    const user = this.userRepository.findOne({ where: { email: email } });
+
+    if (!user) {
+      throw new NotFoundException(`User not found`);
+    }
+
+    return user;
   }
 
   async updateUser(
@@ -48,7 +69,7 @@ export class UsersService {
   ): Promise<User> {
     const user = await this.userRepository.update(userId, updateUserDto);
     if (user.affected === 0) {
-      throw new NotFoundException(`User with ID ${userId} not found`);
+      throw new NotFoundException(`User not found`);
     }
     return this.userRepository.findOne({ where: { id: userId } });
   }
@@ -56,7 +77,7 @@ export class UsersService {
   async deleteUser(userId: string): Promise<void> {
     const result = await this.userRepository.delete(userId);
     if (result.affected === 0) {
-      throw new NotFoundException(`User with ID ${userId} not found`);
+      throw new NotFoundException(`User not found`);
     }
   }
 }

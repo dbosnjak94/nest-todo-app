@@ -26,20 +26,24 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
-  @Post()
-  @ApiOperation({ summary: 'Create a new user' })
-  @ApiResponse({
-    status: 409,
-    description: 'Email already exists',
-  })
-  @ApiResponse({
-    status: 201,
-    description: 'The User has been successfully created',
-  })
-  createUser(@Body() createUserDto: CreateUserDto) {
-    return this.userService.createUser(createUserDto);
-  }
+  // Since we have register user endpoint, we do not need to have create user endpoint in user module.
+  // It can be introduced later when we will have somehind of admin dashboard and then admin can create and delete and search for users
+  // @Post()
+  // @ApiOperation({ summary: 'Create a new user' })
+  // @ApiResponse({
+  //   status: 409,
+  //   description: 'Email already exists',
+  // })
+  // @ApiResponse({
+  //   status: 201,
+  //   description: 'The User has been successfully created',
+  // })
+  // createUser(@Body() createUserDto: CreateUserDto) {
+  //   return this.userService.createUser(createUserDto);
+  // }
 
+  //This endpoint should be protected, but for the simplicity of the example and searching through the users
+  // I will leave it unprotected for now
   @Get('')
   // @UseGuards(JwtAuthGuard)
   // @ApiBearerAuth()
