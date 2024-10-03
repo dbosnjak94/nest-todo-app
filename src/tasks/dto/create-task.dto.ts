@@ -1,3 +1,5 @@
+// src/tasks/dto/create-task.dto.ts
+
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsString, IsOptional, IsDate, IsUUID, IsArray } from 'class-validator';
 import { Type } from 'class-transformer';
@@ -30,10 +32,6 @@ export class CreateTaskDto {
   @Type(() => Date)
   @IsOptional()
   reminderTime?: Date;
-
-  @ApiProperty({ description: 'The ID of the user who owns this task' })
-  @IsUUID()
-  userId: string;
 
   @ApiPropertyOptional({
     description: 'The IDs of the categories this task belongs to',
