@@ -2,6 +2,7 @@ import { Controller, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -20,5 +21,13 @@ export class AuthController {
       return { statusCode: 401, message: 'Unauthorized' };
     }
     return this.authService.login(user);
+  }
+
+  @Post('register')
+  @ApiOperation({ summary: 'Register new user' })
+  @ApiResponse({ status: 201, description: 'User successfully registered' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  async register(@Body() registerDto: RegisterDto) {
+    return this.authService.registerUser(registerDto);
   }
 }
