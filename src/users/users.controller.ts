@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Patch,
   Post,
@@ -26,6 +28,10 @@ export class UsersController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new user' })
+  @ApiResponse({
+    status: 409,
+    description: 'Email already exists',
+  })
   @ApiResponse({
     status: 201,
     description: 'The User has been successfully created',
