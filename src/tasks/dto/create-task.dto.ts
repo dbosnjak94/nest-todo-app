@@ -1,5 +1,3 @@
-// src/tasks/dto/create-task.dto.ts
-
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsString, IsOptional, IsDate, IsUUID, IsArray } from 'class-validator';
 import { Type } from 'class-transformer';
