@@ -21,11 +21,13 @@ export class TasksService {
     userId: string,
   ): Promise<Task> {
     const { categoryIds, ...taskData } = createTaskDto;
+
     const task = this.taskRepository.create({
       ...taskData,
       user: { id: userId },
       categories: categoryIds ? categoryIds.map((id) => ({ id })) : [],
     });
+
     try {
       return await this.taskRepository.save(task);
     } catch (error) {
@@ -56,16 +58,32 @@ export class TasksService {
     userId: string,
     page: number = 1,
     limit: number = 10,
+    startDate: string,
+    endDate: string,
   ): Promise<{ tasks: Task[]; total: number }> {
-    const [tasks, total] = await this.taskRepository.findAndCount({
-      where: { user: { id: userId } },
-      relations: ['categories'],
-      skip: (page - 1) * limit,
-      take: limit,
-    });
+    const query = this.taskRepository
+      .createQueryBuilder('task')
+      .where('task.user.id = :userId', { userId })
+      .leftJoinAndSelect('task.categories', 'category');
+
+    if (startDate && endDate) {
+      query.andWhere('task.deadline BETWEEN :startDate AND :endDate', {
+        startDate,
+        endDate,
+      });
+    } else if (startDate) {
+      query.andWhere('task.deadline >= :startDate', { startDate });
+    } else if (endDate) {
+      query.andWhere('task.deadline <= :endDate', { endDate });
+    }
+
+    const [tasks, total] = await query
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getManyAndCount();
 
     if (!tasks.length) {
-      throw new NotFoundException(`No tasks found`);
+      throw new NotFoundException(`No tasks found for the specified criteria`);
     }
 
     return { tasks, total };
@@ -73,7 +91,9 @@ export class TasksService {
 
   async updateTaskStatus(taskId: string, status: TaskStatus): Promise<Task> {
     const task = await this.findTaskById(taskId);
+
     task.status = status;
+
     try {
       return await this.taskRepository.save(task);
     } catch (error) {
@@ -83,18 +103,12 @@ export class TasksService {
 
   async searchTask(searchTerm: string, userId: string): Promise<Task[]> {
     try {
-      console.log('Searching for term:', searchTerm, 'for user:', userId);
       const tasks = await this.taskRepository.find({
-        where: [
-          { title: Like(`%${searchTerm}%`), user: { id: userId } },
-          { description: Like(`%${searchTerm}%`), user: { id: userId } },
-        ],
+        where: [{ title: Like(`%${searchTerm}%`), user: { id: userId } }],
         relations: ['categories'],
       });
-      console.log('Search results:', tasks);
       return tasks;
     } catch (error) {
-      console.error('Error in searchTask:', error);
       throw error;
     }
   }
@@ -104,9 +118,11 @@ export class TasksService {
     updateTaskDto: UpdateTaskDto,
   ): Promise<Task> {
     const task = await this.taskRepository.update(taskId, updateTaskDto);
+
     if (!task) {
       throw new NotFoundException(`Task not found`);
     }
+
     return this.taskRepository.findOne({
       where: { id: taskId },
       relations: ['user', 'categories'],
@@ -115,6 +131,7 @@ export class TasksService {
 
   async deleteTask(taskId: string): Promise<void> {
     const result = await this.taskRepository.delete(taskId);
+
     if (result.affected === 0) {
       throw new NotFoundException(`Task not found`);
     }

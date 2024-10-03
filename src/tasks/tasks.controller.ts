@@ -8,7 +8,6 @@ import {
   Patch,
   Post,
   Query,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -74,7 +73,9 @@ export class TasksController {
   }
 
   @Get('user/:id')
-  @ApiOperation({ summary: 'Get all tasks for a specific user' })
+  @ApiOperation({
+    summary: 'Get all tasks for a specific user with deadline filter',
+  })
   @ApiResponse({
     status: 200,
     description: 'Return all tasks for the specific user',
@@ -85,12 +86,22 @@ export class TasksController {
   })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiQuery({ name: 'startDate', required: false, type: Date })
+  @ApiQuery({ name: 'endDate', required: false, type: Date })
   findTasksByUserId(
     @GetUser() user: JwtPayload,
     @Query('page', new ParseIntPipe({ optional: true })) page: number = 1,
     @Query('limit', new ParseIntPipe({ optional: true })) limit: number = 10,
+    @Query('startDate') startDate?: string,
+    @Query('endDate') endDate?: string,
   ) {
-    return this.taskService.findTasksByUserId(user.userId, page, limit);
+    return this.taskService.findTasksByUserId(
+      user.userId,
+      page,
+      limit,
+      startDate,
+      endDate,
+    );
   }
 
   @Patch(':id')
