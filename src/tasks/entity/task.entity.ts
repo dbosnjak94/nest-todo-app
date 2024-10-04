@@ -1,14 +1,16 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinTable,
   ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
-import { User } from '../users/user.entity';
-import { Category } from '../categories/category.entity';
-import { TaskStatus } from './enum/task-status.enum';
+import { User } from '../../users/entity/user.entity';
+import { Category } from '../../categories/entity/category.entity';
+import { TaskStatus } from '../enum/task-status.enum';
 
 @Entity({ schema: 'todo_app', name: 'tasks' })
 export class Task {
@@ -40,4 +42,13 @@ export class Task {
   @ManyToMany(() => Category)
   @JoinTable()
   categories: Category[];
+
+  @Column({ nullable: false, default: false })
+  archived: Boolean;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

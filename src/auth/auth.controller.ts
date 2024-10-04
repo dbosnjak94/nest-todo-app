@@ -12,7 +12,6 @@ export class AuthController {
   @Post('login')
   @ApiOperation({ summary: 'User login and get JWT token' })
   async login(@Body() loginDto: LoginDto) {
-    console.log(loginDto.email);
     const user = await this.authService.validateUser(
       loginDto.email,
       loginDto.password,

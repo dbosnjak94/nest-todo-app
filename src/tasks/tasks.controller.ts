@@ -49,7 +49,6 @@ export class TasksController {
   @ApiOperation({ summary: 'Get all tasks' })
   @ApiResponse({ status: 200, description: 'Return all Tasks' })
   listAllTasks() {
-    console.log('merch');
     return this.taskService.listAllTasks();
   }
 

@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Like, Repository } from 'typeorm';
-import { Task } from './task.entity';
+import { Task } from './entity/task.entity';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { TaskStatus } from './enum/task-status.enum';
@@ -93,6 +93,10 @@ export class TasksService {
     const task = await this.findTaskById(taskId);
 
     task.status = status;
+
+    if (status === 'DONE') {
+      task.archived = true;
+    }
 
     try {
       return await this.taskRepository.save(task);

@@ -41,11 +41,11 @@ export class CreateTaskDto {
   @IsOptional()
   deadline?: Date;
 
-  @ApiPropertyOptional({ description: 'The reminder time for the task' })
-  @IsDate()
-  @Type(() => Date)
-  @IsOptional()
-  reminderTime?: Date;
+  // @ApiPropertyOptional({ description: 'The reminder time for the task' })
+  // @IsDate()
+  // @Type(() => Date)
+  // @IsOptional()
+  // reminderTime?: Date;
 
   @ApiPropertyOptional({
     description: 'The IDs of the categories this task belongs to',
