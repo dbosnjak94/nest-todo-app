@@ -58,7 +58,7 @@ export class TasksController {
   @ApiQuery({ name: 'term', required: true, type: String })
   @ApiResponse({ status: 200, description: 'Return matching tasks.' })
   searchTasks(@Query('term') term: string, @GetUser() user: JwtPayload) {
-    return this.taskService.searchTask(term, user.userId);
+    return this.taskService.searchTaskByTerm(term, user.userId);
   }
 
   @Get(':id')
@@ -134,7 +134,7 @@ export class TasksController {
     return this.taskService.updateTaskStatus(id, updateTaskStatusDto.status);
   }
 
-  @Post(':id/reminder')
+  @Patch(':id/reminder')
   @ApiOperation({ summary: 'Set a reminder for a task' })
   @ApiResponse({ status: 200, description: 'Reminder set successfully' })
   @ApiResponse({ status: 400, description: 'Bad Request' })

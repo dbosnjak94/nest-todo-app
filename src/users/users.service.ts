@@ -1,6 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from './entity/user.entity';
+import { User } from './entities/user.entity';
 import {
   BadRequestException,
   ConflictException,
@@ -67,11 +67,14 @@ export class UsersService {
     userId: string,
     updateUserDto: UpdateUserDto,
   ): Promise<User> {
-    const user = await this.userRepository.update(userId, updateUserDto);
-    if (user.affected === 0) {
+    const user = await this.findUserById(userId);
+
+    if (!user) {
       throw new NotFoundException(`User not found`);
     }
-    return this.userRepository.findOne({ where: { id: userId } });
+
+    Object.assign(user, updateUserDto);
+    return await this.userRepository.save(user);
   }
 
   async deleteUser(userId: string): Promise<void> {

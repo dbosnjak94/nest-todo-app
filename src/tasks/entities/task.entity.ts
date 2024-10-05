@@ -8,8 +8,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { User } from '../../users/entity/user.entity';
-import { Category } from '../../categories/entity/category.entity';
+import { User } from '../../users/entities/user.entity';
+import { Category } from '../../categories/entities/category.entity';
 import { TaskStatus } from '../enum/task-status.enum';
 
 @Entity({ schema: 'todo_app', name: 'tasks' })

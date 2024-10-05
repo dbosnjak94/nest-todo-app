@@ -6,7 +6,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Task } from '../../tasks/entity/task.entity';
+import { Task } from '../../tasks/entities/task.entity';
 
 @Entity({ schema: 'todo_app', name: 'users' })
 export class User {

@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Like, Repository } from 'typeorm';
-import { Task } from './entity/task.entity';
+import { Task } from './entities/task.entity';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { TaskStatus } from './enum/task-status.enum';
@@ -106,7 +106,7 @@ export class TasksService {
     }
   }
 
-  async searchTask(searchTerm: string, userId: string): Promise<Task[]> {
+  async searchTaskByTerm(searchTerm: string, userId: string): Promise<Task[]> {
     try {
       const tasks = await this.taskRepository.find({
         where: [{ title: Like(`%${searchTerm}%`), user: { id: userId } }],

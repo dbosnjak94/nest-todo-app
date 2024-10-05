@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Category } from './entity/category.entity';
+import { Category } from './entities/category.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { Repository } from 'typeorm';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { Task } from '../tasks/entity/task.entity';
+import { Task } from '../tasks/entities/task.entity';
 
 @Injectable()
 export class CategoriesService {
@@ -69,9 +69,12 @@ export class CategoriesService {
     categoryId: string,
     updateCategoryDto: UpdateCategoryDto,
   ) {
-    const category = await this.categoryRepository.findOne({
-      where: { id: categoryId },
-    });
+    const category = await this.findCategoryById(categoryId);
+
+    if (!category) {
+      throw new NotFoundException(`Category not found`);
+    }
+
     Object.assign(category, updateCategoryDto);
     return await this.categoryRepository.save(category);
   }

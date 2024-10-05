@@ -24,6 +24,10 @@ export class EmailService {
       html: `<p>Don't forget about your taskL <strong>${taskTitle}</strong></p>`,
     };
 
-    await this.transporter.sendMail(mailOptions);
+    try {
+      await this.transporter.sendMail(mailOptions);
+    } catch (error) {
+      throw new Error(`Failed to send reminder email: ${error.message}`);
+    }
   }
 }

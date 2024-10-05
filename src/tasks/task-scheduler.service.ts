@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Task } from './entity/task.entity';
+import { Task } from './entities/task.entity';
 import { Between, In, IsNull, LessThan, Not, Repository } from 'typeorm';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { EmailService } from '../email/email.service';
@@ -42,8 +42,6 @@ export class TasksSchedulerService {
       ],
     });
 
-    console.log('tasksToArchive', tasksToArchive);
-
     for (let task of tasksToArchive) {
       task.archived = true;
       await this.taskRepository.save(task);
@@ -66,8 +64,6 @@ export class TasksSchedulerService {
       },
       relations: ['user'],
     });
-
-    console.log('TasksWithReminders', tasksWithReminders);
 
     for (const task of tasksWithReminders) {
       await this.emailService.sendReminderEmail(task.user.email, task.title);

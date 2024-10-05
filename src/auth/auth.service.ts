@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
+import { comparePassword, hashPassword } from '../utils/password.util';
 
 @Injectable()
 export class AuthService {
@@ -22,8 +23,9 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const isPasswordValid = await bcrypt.compare(inputPassword, user.password);
-    if (!isPasswordValid) {
+    const isPasswordValid = await comparePassword(inputPassword, user.password);
+
+    if (user && !isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
@@ -44,7 +46,7 @@ export class AuthService {
       throw new ConflictException(`User with this email already exists`);
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await hashPassword(password);
 
     try {
       const newUser = await this.userService.createUser({
