@@ -24,6 +24,7 @@ import { UpdateTaskDto } from './dto/update-task.dto';
 import { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
 import { GetUser } from '../auth/decorators/get-user.decorator';
 import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
+import { SetReminderDto } from './dto/set-reminder.dto';
 
 @ApiBearerAuth()
 @ApiTags('tasks')
@@ -131,6 +132,18 @@ export class TasksController {
     @Body() updateTaskStatusDto: UpdateTaskStatusDto,
   ) {
     return this.taskService.updateTaskStatus(id, updateTaskStatusDto.status);
+  }
+
+  @Post(':id/reminder')
+  @ApiOperation({ summary: 'Set a reminder for a task' })
+  @ApiResponse({ status: 200, description: 'Reminder set successfully' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiResponse({ status: 404, description: 'Task not found' })
+  setReminder(
+    @Param('id') taskId: string,
+    @Body() setReminderDto: SetReminderDto,
+  ) {
+    return this.taskService.setReminder(taskId, setReminderDto);
   }
 
   @Delete(':id')

@@ -9,6 +9,7 @@ import { Task } from './entity/task.entity';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { TaskStatus } from './enum/task-status.enum';
+import { SetReminderDto } from './dto/set-reminder.dto';
 
 @Injectable()
 export class TasksService {
@@ -117,20 +118,52 @@ export class TasksService {
     }
   }
 
-  async updateTask(
+  async setReminder(
     taskId: string,
-    updateTaskDto: UpdateTaskDto,
+    setReminderDto: SetReminderDto,
   ): Promise<Task> {
-    const task = await this.taskRepository.update(taskId, updateTaskDto);
+    const task = await this.taskRepository.findOne({ where: { id: taskId } });
 
     if (!task) {
       throw new NotFoundException(`Task not found`);
     }
 
-    return this.taskRepository.findOne({
-      where: { id: taskId },
-      relations: ['user', 'categories'],
-    });
+    if (!task.deadline) {
+      throw new BadRequestException(
+        `Cannot set a reminder for a task without a deadline`,
+      );
+    }
+
+    if (setReminderDto.reminderTime > task.deadline) {
+      throw new BadRequestException(
+        `Reminder time cannot be after the deadline`,
+      );
+    }
+
+    task.reminderTime = setReminderDto.reminderTime;
+    return this.taskRepository.save(task);
+  }
+
+  async updateTask(
+    taskId: string,
+    updateTaskDto: UpdateTaskDto,
+  ): Promise<Task> {
+    const task = await this.findTaskById(taskId);
+
+    if (!task) {
+      throw new NotFoundException(`Task not found`);
+    }
+
+    // check if deadline is in the past
+    if (updateTaskDto.deadline) {
+      const now = new Date();
+      if (new Date(updateTaskDto.deadline) < now) {
+        throw new BadRequestException('Deadline cannot be in the past');
+      }
+    }
+
+    Object.assign(task, updateTaskDto);
+    return await this.taskRepository.save(task);
   }
 
   async deleteTask(taskId: string): Promise<void> {
