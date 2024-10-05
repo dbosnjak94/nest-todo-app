@@ -1,15 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class AppService {
-  // @Cron(CronExpression.EVERY_MINUTE)
-  // async logHealthCheck() {
-  //   try {
-  //     const response = await axios.get('http://localhost:3000/health');
-  //     this.logger.log(`Health check status: ${JSON.stringify(response.data)}`);
-  //   } catch (error) {
-  //     this.logger.error('Health check failed', error);
-  //   }
-  // }
+  private readonly logger = new Logger('Health Check');
+
+  @Cron(CronExpression.EVERY_10_SECONDS)
+  async logHealthCheck() {
+    try {
+      this.logger.log(`Health check status: ok`);
+    } catch (error) {
+      this.logger.error('Health check failed', error.message);
+    }
+  }
 }

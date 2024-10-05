@@ -22,7 +22,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     CategoriesModule,
     AppModule,
   ],
-  // controllers: [AppController],
-  // providers: [AppService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
