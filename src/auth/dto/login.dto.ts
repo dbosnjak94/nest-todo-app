@@ -4,7 +4,7 @@ import { Transform } from 'class-transformer';
 
 export class LoginDto {
   @ApiProperty({
-    example: 'user1@email.com',
+    example: 'frodo.baggins@email.com',
     description: 'The email of the user',
   })
   @IsEmail({}, { message: 'Please provide a valid email address' })
