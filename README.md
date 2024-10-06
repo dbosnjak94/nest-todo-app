@@ -76,11 +76,11 @@ DB_HOST=localhost
 
 DB_PORT=5432
 
-DB_USERNAME=
+DB_USERNAME= <your db username>
 
-DB_PASSWORD=
+DB_PASSWORD= <your db password>
 
-DB_DATABASE=todo_app
+DB_DATABASE= <your database name>
 
 DB_SYNCHRONIZE=true
 
@@ -88,11 +88,11 @@ HOST=localhost
 
 PORT=3000
 
-JWT_SECRET=
+JWT_SECRET= <your JWT secret>
 
-EMAIL_USER= <needed for sending an reminder email>
+EMAIL_USER= <needed by nodemailer for sending an reminder email>
 
-EMAIL_PASS= <needed for sending an reminder email>
+EMAIL_PASS= <needed by nodemailer for sending an reminder email>
 
 ```
 
@@ -118,27 +118,13 @@ All protected routes require a valid JWT token. To obtain a token:
 
 3. Use the returned token in the Authorization header as a Bearer token on Swagger API page
 
-## Docker Setup
-
-To run the project using Docker:
-
-1. Ensure Docker and Docker Compose are installed on your system
-
-2. Build the Docker image:
-
-`docker-compose build`
-
-3. Start the services:
-
-`docker-compose up`
-
-The API should be available at PORT `3000`
-
 ## Testing
 
 To run the tests:
 
 `yarn test`
+
+This will execute the unit tests for the application.
 
 ## Completed features
 
