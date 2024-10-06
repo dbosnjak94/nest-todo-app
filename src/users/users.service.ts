@@ -19,7 +19,9 @@ export class UsersService {
   ) {}
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
-    const existingUser = await this.findUserByEmail(createUserDto.email);
+    const existingUser = await this.userRepository.findOne({
+      where: { email: createUserDto.email },
+    });
 
     if (existingUser) {
       throw new ConflictException('User with this email already exists');
@@ -33,32 +35,24 @@ export class UsersService {
     });
 
     try {
-      return this.userRepository.save(user);
+      return await this.userRepository.save(user);
     } catch (error) {
-      throw new BadRequestException(`Failed to create user`);
+      throw new BadRequestException('Failed to create user');
     }
   }
 
-  findAllUsers(): Promise<User[]> {
+  async findAllUsers(): Promise<User[]> {
     return this.userRepository.find();
   }
 
-  findUserById(userId: string): Promise<User> {
-    const user = this.userRepository.findOne({ where: { id: userId } });
-
-    if (!user) {
-      throw new NotFoundException(`User not found`);
-    }
+  async findUserById(userId: string): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
 
     return user;
   }
 
-  findUserByEmail(email: string): Promise<User> {
-    const user = this.userRepository.findOne({ where: { email: email } });
-
-    if (!user) {
-      throw new NotFoundException(`User not found`);
-    }
+  async findUserByEmail(email: string): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { email } });
 
     return user;
   }
@@ -68,11 +62,9 @@ export class UsersService {
     updateUserDto: UpdateUserDto,
   ): Promise<User> {
     const user = await this.findUserById(userId);
-
     if (!user) {
       throw new NotFoundException(`User not found`);
     }
-
     Object.assign(user, updateUserDto);
     return await this.userRepository.save(user);
   }
@@ -80,7 +72,7 @@ export class UsersService {
   async deleteUser(userId: string): Promise<void> {
     const result = await this.userRepository.delete(userId);
     if (result.affected === 0) {
-      throw new NotFoundException(`User not found`);
+      throw new NotFoundException('User not found');
     }
   }
 }
