@@ -1,0 +1,39 @@
+version: '3'
+services:
+  app:
+    build: .
+    ports:
+      - '${PORT}:${PORT}'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - DB_TYPE=${DB_TYPE}
+      - DB_HOST=postgres
+      - DB_PORT=${DB_PORT}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_DATABASE=${DB_DATABASE}
+      - DB_SYNCHRONIZE=${DB_SYNCHRONIZE}
+      - HOST=${HOST}
+      - PORT=${PORT}
+      - JWT_SECRET=${JWT_SECRET}
+
+  postgres:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_DATABASE}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - '${DB_PORT}:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USERNAME}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
