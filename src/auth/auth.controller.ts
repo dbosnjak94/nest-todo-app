@@ -27,6 +27,8 @@ export class AuthController {
   @ApiResponse({ status: 201, description: 'User successfully registered' })
   @ApiResponse({ status: 400, description: 'Bad request' })
   async register(@Body() registerDto: RegisterDto) {
+    console.log('register', registerDto);
+
     return this.authService.registerUser(registerDto);
   }
 }
