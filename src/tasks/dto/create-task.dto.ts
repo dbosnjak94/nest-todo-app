@@ -8,6 +8,7 @@ import {
   MinLength,
   MaxLength,
   IsEnum,
+  IsISO8601,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { TaskStatus } from '../enum/task-status.enum';
@@ -35,11 +36,13 @@ export class CreateTaskDto {
   @IsEnum(TaskStatus)
   status: TaskStatus;
 
-  @ApiPropertyOptional({ description: 'The deadline of the task' })
-  @IsDate()
-  @Type(() => Date)
+  @ApiPropertyOptional({
+    description: 'The deadline of the task',
+    example: '2024-12-15T10:00:00.000Z',
+  })
+  @IsISO8601({ strict: true })
   @IsOptional()
-  deadline?: Date;
+  deadline?: string;
 
   // @ApiPropertyOptional({ description: 'The reminder time for the task' })
   // @IsDate()

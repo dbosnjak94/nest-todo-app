@@ -8,9 +8,9 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { User } from '../../users/entities/user.entity';
 import { Category } from '../../categories/entities/category.entity';
 import { TaskStatus } from '../enum/task-status.enum';
+import { User } from '../../users/entities/user.entity';
 
 @Entity({ schema: 'todo_app', name: 'tasks' })
 export class Task {
@@ -42,6 +42,9 @@ export class Task {
   @ManyToMany(() => Category)
   @JoinTable()
   categories: Category[];
+
+  @Column({ default: false })
+  reminderSent: boolean;
 
   @Column({ nullable: false, default: false })
   archived: Boolean;

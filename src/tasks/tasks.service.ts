@@ -21,12 +21,13 @@ export class TasksService {
     createTaskDto: CreateTaskDto,
     userId: string,
   ): Promise<Task> {
-    const { categoryIds, ...taskData } = createTaskDto;
+    const { categoryIds, deadline, ...taskData } = createTaskDto;
 
     const task = this.taskRepository.create({
       ...taskData,
       user: { id: userId },
       categories: categoryIds ? categoryIds.map((id) => ({ id })) : [],
+      deadline: deadline ? new Date(deadline) : null,
     });
 
     try {

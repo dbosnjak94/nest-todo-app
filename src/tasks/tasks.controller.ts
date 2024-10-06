@@ -72,28 +72,44 @@ export class TasksController {
     return this.taskService.findTaskById(taskId);
   }
 
-  @Get('user/:id')
+  @Get('user/deadline')
   @ApiOperation({
-    summary: 'Get all tasks for a specific user with deadline filter',
+    summary: 'Get all tasks for the authenticated user with deadline filter',
   })
   @ApiResponse({
     status: 200,
-    description: 'Return all tasks for the specific user',
+    description: 'Return all tasks for the authenticated user',
   })
   @ApiResponse({
     status: 404,
-    description: 'No tasks forund for specific user',
+    description: 'No tasks found for the user',
   })
-  @ApiQuery({ name: 'page', required: false, type: Number })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
-  @ApiQuery({ name: 'startDate', required: false, type: Date })
-  @ApiQuery({ name: 'endDate', required: false, type: Date })
+  @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
+  @ApiQuery({ name: 'limit', required: false, type: Number, example: 10 })
+  @ApiQuery({
+    name: 'startDate',
+    required: false,
+    type: Date,
+    example: '2024-01-01',
+  })
+  @ApiQuery({
+    name: 'endDate',
+    required: false,
+    type: Date,
+    example: '2024-12-31',
+  })
   findTasksByUserId(
     @GetUser() user: JwtPayload,
     @Query('page', new ParseIntPipe({ optional: true })) page: number = 1,
     @Query('limit', new ParseIntPipe({ optional: true })) limit: number = 10,
-    @Query('startDate') startDate?: string,
-    @Query('endDate') endDate?: string,
+    @Query('startDate')
+    startDate: string = new Date().toISOString().split('T')[0],
+    @Query('endDate')
+    endDate: string = new Date(
+      new Date().setFullYear(new Date().getFullYear() + 1),
+    )
+      .toISOString()
+      .split('T')[0],
   ) {
     return this.taskService.findTasksByUserId(
       user.userId,
