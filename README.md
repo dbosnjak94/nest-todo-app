@@ -107,6 +107,18 @@ EMAIL_PASS= <needed by nodemailer for sending an reminder email>
 
 ```
 
+## EMAIL SERVICE:
+
+This was the email service used for sending reminder email:
+
+Create an profile, and the service should provide you with EMAIL_USER and EMAIL_PASS env variables
+
+```
+https://imitate.email/
+```
+
+NOTE: it will only imitate sending the email to particular user email address, but you will be able to see all the mails that have been "sent"
+
 4. Start the development server:
 
 `yarn start:dev`
