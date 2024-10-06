@@ -50,7 +50,7 @@ export class TasksSchedulerService {
     this.logger.log(`Archived ${tasksToArchive.length} tasks.`);
   }
 
-  @Cron(CronExpression.EVERY_10_SECONDS)
+  @Cron(CronExpression.EVERY_MINUTE)
   async checkTasksAndSendReminders() {
     this.logger.log(`Checking for task reminders...`);
 
@@ -60,13 +60,18 @@ export class TasksSchedulerService {
     const tasksWithReminders = await this.taskRepository.find({
       where: {
         reminderTime: Between(now, fiveMinutesFromNow),
+        reminderSent: false,
         archived: false,
       },
       relations: ['user'],
     });
 
     for (const task of tasksWithReminders) {
-      await this.emailService.sendReminderEmail(task.user.email, task.title);
+      await this.emailService.sendReminderEmail(task.user.email, task);
+
+      task.reminderSent = true;
+      await this.taskRepository.save(task);
+
       this.logger.log(`Sent reminder email for task: ${task.title}`);
     }
   }
