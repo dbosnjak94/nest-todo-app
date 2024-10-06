@@ -32,29 +32,40 @@ Project is created with:
 
 - Docker
 
-NPM libraries used in the project:
+Libraries
 
-- @nestjs/common
+- @nestjs/common: ^10.0.0
 
-- @nestjs/core
+- @nestjs/config: ^3.2.3
+- @nestjs/core: ^10.0.0
 
-- @nestjs/platform-express
+- @nestjs/jwt: ^10.2.0
 
-- @nestjs/typeorm
+- @nestjs/passport: ^10.0.3
 
-- typeorm
+- @nestjs/platform-express: ^10.0.0
+- @nestjs/schedule: ^4.1.1
 
-- @nestjs/jwt
+- @nestjs/swagger: ^7.4.2
 
-- @nestjs/passport
+- @nestjs/typeorm: ^10.0.2
 
-- bcrypt
+- bcrypt: ^5.1.1
+- class-validator: ^0.14.1
+- nodemailer: ^6.9.15
+- passport: ^0.7.0
+- pg: ^8.13.0
+- typeorm: ^0.3.20
 
-- class-validator
+Development tools:
 
-- class-transformer
+- Jest: ^29.5.0
 
-- pg
+- ESLint: ^8.42.0
+
+- Prettier: ^3.0.0
+
+- TypeScript: ^5.1.3
 
 ## Setup
 
